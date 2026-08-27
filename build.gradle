@@ -1,23 +1,18 @@
-plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-}
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
 
-android {
-    namespace 'com.example.apkmaker'
-    compileSdk 35
-
-    defaultConfig {
-        applicationId 'com.example.apkmaker'
-        minSdk 24
-        targetSdk 35
-        versionCode 1
-        versionName '1.0'
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.6.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
     }
 }
 
-dependencies {
-    implementation 'androidx.core:core-ktx:1.15.0'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
