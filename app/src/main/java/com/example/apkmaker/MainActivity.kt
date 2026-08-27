@@ -1,108 +1,90 @@
 package com.example.apkmaker
 
-import android.graphics.Typeface
 import android.os.Bundle
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var preview: LinearLayout
+    private lateinit var urlBox: EditText
+    private lateinit var preview: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(24, 24, 24, 24)
+            setPadding(20, 20, 20, 20)
         }
 
         root.addView(TextView(this).apply {
-            text = "APK Maker"
+            text = "APK Maker 2.0"
             textSize = 28f
-            typeface = Typeface.DEFAULT_BOLD
         })
 
         val appName = EditText(this).apply {
             hint = "App Name"
             setSingleLine(true)
         }
-
-        val packageName = EditText(this).apply {
-            hint = "Package Name"
-            setSingleLine(true)
-            setText("com.example.myapp")
-        }
-
         root.addView(appName)
-        root.addView(packageName)
 
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
+        urlBox = EditText(this).apply {
+            hint = "Website URL"
+            setSingleLine(true)
         }
+        root.addView(urlBox)
 
-        val addText = Button(this).apply {
-            text = "Add Text"
+        val previewButton = Button(this).apply {
+            text = "PREVIEW WEBSITE"
         }
+        root.addView(previewButton)
 
-        val addButton = Button(this).apply {
-            text = "Add Button"
-        }
-
-        row.addView(addText, LinearLayout.LayoutParams(0, -2, 1f))
-        row.addView(addButton, LinearLayout.LayoutParams(0, -2, 1f))
-        root.addView(row)
-
-        val clear = Button(this).apply {
-            text = "Clear Preview"
-        }
-
-        root.addView(clear)
-
-        root.addView(TextView(this).apply {
-            text = "Preview"
-            textSize = 20f
-            typeface = Typeface.DEFAULT_BOLD
-        })
-
-        preview = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
+        preview = WebView(this).apply {
+            webViewClient = WebViewClient()
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
         }
 
         root.addView(
             preview,
-            LinearLayout.LayoutParams(-1, 0, 1f)
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
         )
 
-        val build = Button(this).apply {
-            text = "Prepare APK Build"
+        val buildButton = Button(this).apply {
+            text = "BUILD WEBVIEW APK"
+        }
+        root.addView(buildButton)
+
+        previewButton.setOnClickListener {
+            var url = urlBox.text.toString().trim()
+
+            if (url.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "Website URL দিন",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            if (!url.startsWith("http://") &&
+                !url.startsWith("https://")) {
+                url = "https://$url"
+            }
+
+            preview.loadUrl(url)
         }
 
-        root.addView(build)
-
-        addText.setOnClickListener {
-            preview.addView(TextView(this).apply {
-                text = appName.text.toString().ifBlank { "Sample Text" }
-                textSize = 18f
-                setPadding(8, 16, 8, 16)
-            })
-        }
-
-        addButton.setOnClickListener {
-            preview.addView(Button(this).apply {
-                text = "My Button"
-            })
-        }
-
-        clear.setOnClickListener {
-            preview.removeAllViews()
-        }
-
-        build.setOnClickListener {
+        buildButton.setOnClickListener {
             Toast.makeText(
                 this,
-                "Project: ${appName.text}\nPackage: ${packageName.text}\nBuild with GitHub Actions.",
+                "APK project প্রস্তুত। GitHub Actions থেকে APK build করুন।",
                 Toast.LENGTH_LONG
             ).show()
         }
